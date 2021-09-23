@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectTasksOptions">
+    <TaskOptions isEnabled="true">
+      <option name="arguments" value="--color --gulpfile C:\TravelSoft\gulpfile.js precompile move_site_js" />
+      <option name="checkSyntaxErrors" value="true" />
+      <option name="description" />
+      <option name="exitCodeBehavior" value="ALWAYS" />
+      <option name="fileExtension" value="js" />
+      <option name="immediateSync" value="false" />
+      <option name="name" value="site_js" />
+      <option name="output" value="$ProjectFileDir$/build/client/js/$FileNameWithoutExtension$.js" />
+      <option name="outputFilters">
+        <array />
+      </option>
+      <option name="outputFromStdout" value="false" />
+      <option name="program" value="$PROJECT_DIR$/node_modules/.bin/gulp" />
+      <option name="runOnExternalChanges" value="false" />
+      <option name="scopeName" value="site_js" />
+      <option name="trackOnlyRoot" value="false" />
+      <option name="workingDir" value="" />
+      <envs />
+    </TaskOptions>
+  </component>
+</project>

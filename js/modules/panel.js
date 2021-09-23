@@ -1,0 +1,73 @@
+$("a.panel-action")
+  .on("click", function () {
+      
+      if ($(this).data("toggle")) {
+          let data_toggle = $(this).data("toggle")
+          
+          switch (data_toggle) {
+              case "panel-fullscreen":
+                  Panel.go_fullscreen($(this))
+                  break
+              default:
+                  break
+          }
+      } else {
+          Panel.compress_all()
+      }
+      
+  })
+
+const Panel = (function () {
+    "use strict"
+    
+    const init = function () {
+    
+    }
+    
+    const compress_all = function () {
+        $(".is-fullscreen").each(function () {
+            $(this).removeClass("is-fullscreen")
+        })
+        $("a.panel-action.fas.fa-compress").each(function () {
+            $(this)
+              .removeClass("fa-compress")
+              .addClass("fa-expand")
+        })
+        
+    }
+    
+    const expand = function ($this) {
+        $this.removeClass("fa-expand")
+        $this.addClass("fa-compress")
+        $this.closest("section.panel").addClass("is-fullscreen")
+    }
+    
+    const compress = function ($this) {
+        $this.removeClass("fa-compress")
+        $this.addClass("fa-expand")
+        $this.closest("section.panel").removeClass("is-fullscreen")
+    }
+    
+    const go_fullscreen = function ($this) {
+        if ($this) {
+            if ($this.hasClass("fa-expand")) {
+                expand($this)
+            } else if ($this.hasClass("fa-compress")) {
+                compress($this)
+            }
+        }
+    }
+    
+    return {
+        go_fullscreen: function ($this) {
+            go_fullscreen($this)
+        },
+        compress_all: function () {
+            compress_all()
+        },
+        init: function (settings) {
+            init(settings)
+        },
+    }
+    
+})()

@@ -1,0 +1,33 @@
+{
+  "name": "travelsoft",
+  "version": "1.0.0",
+  "description": "TravelSoft Web App",
+  "main": "public_html/assets/js/mdb.js",
+  "scripts": {
+    "dev_start": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "Travel"
+  ],
+  "author": "David Wingfield <david@trips2italy.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "browser-sync": "^2.27.5",
+    "del": "^6.0.0",
+    "gulp": "^4.0.2",
+    "gulp-autoprefixer": "^8.0.0",
+    "gulp-clean-css": "^4.3.0",
+    "gulp-concat": "^2.6.1",
+    "gulp-connect-php": "^1.0.3",
+    "gulp-cssmin": "^0.2.0",
+    "gulp-imagemin": "^7.1.0",
+    "gulp-minify": "^3.1.0",
+    "gulp-rename": "^2.0.0",
+    "gulp-rev": "^9.0.0",
+    "gulp-sass": "^5.0.0",
+    "gulp-sourcemaps": "^3.0.0",
+    "sass": "^1.41.1",
+    "stylelint": "^13.13.1",
+    "stylelint-config-standard": "^22.0.0"
+  }
+}

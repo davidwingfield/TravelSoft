@@ -1,0 +1,31 @@
+{
+  "name": "bin/bar",
+  "authors": [
+    {
+      "name": "David Wingfield",
+      "email": "David@trips2italy.com"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "bar\\": ""
+    }
+  },
+  "require": {
+    "cboden/ratchet": "^0.4.1",
+    "stripe/stripe-php": "^6.16",
+    "plivo/php-sdk": "^4.1",
+    "phpmailer/phpmailer": "~6.0",
+    "ext-json": "*",
+    "ext-mysqli": "*",
+    "ext-gd": "*",
+    "ext-pdo": "*",
+    "ext-fileinfo": "*",
+    "ext-mysql_xdevapi": "*",
+    "ext-soap": "*",
+    "ext-simplexml": "*",
+    "ext-curl": "*",
+    "ext-openssl": "*"
+  },
+  "description": "Web Portal"
+}
