@@ -39,6 +39,10 @@ const Product = (function () {
             $(_tab_product_edit_variant).addClass("disabled")
             $(_tab_product_edit_inventory).addClass("disabled")
             $(_tab_product_edit_pricing).addClass("disabled")
+        } else {
+            $(_tab_product_edit_season).removeClass("disabled")
+            $(_tab_product_edit_unit).removeClass("disabled")
+            $(_tab_product_edit_variant).removeClass("disabled")
         }
         
     }

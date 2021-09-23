@@ -823,3 +823,7 @@ h4.panel-title {
 textarea {
   resize: none;
 }
+
+table.dataTable tbody > tr.selected, table.dataTable tbody > tr > .selected {
+  background-color: #eaa86aba;
+}

@@ -94,13 +94,9 @@ $.fn.table = function (settings) {
     
     const update_row = function (row_data) {
         if (row_data) {
-            console.log("----")
-            console.log(row_data)
-            console.log(table_id + "_tr_" + row_data.id)
             
             try {
                 $dTable.row(table_id + "_tr_" + row_data.id).data(row_data).draw(false)
-                formatTable()
             } catch (e) {
                 console.log(e)
             }
@@ -109,6 +105,16 @@ $.fn.table = function (settings) {
         formatTable()
     }
     
+    const clear_selected_rows = function () {
+        try {
+            let table = $("#" + table_id + "> tbody  > tr")
+            $.each(table, function (i, row) {
+                $(row).removeClass("selected")
+            })
+        } catch (e) {
+            console.log("clear_selected_rows", e)
+        }
+    }
     //------------------------------------------------------------------
     
     if (_table) {
@@ -125,6 +131,8 @@ $.fn.table = function (settings) {
         
         if (settings.rowClick) {
             $dTable.on("click", "tr", function () {
+                clear_selected_rows()
+                $(this).addClass("selected")
                 let rowData = $dTable.row(this).data()
                 settings.rowClick(rowData)
             })
@@ -139,6 +147,9 @@ $.fn.table = function (settings) {
     return {
         insertRow: function (row_data) {
             insertRow(row_data)
+        },
+        clearSelectedRows: function () {
+            clear_selected_rows()
         },
         update_row (row_data) {
             update_row(row_data)

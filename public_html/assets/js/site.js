@@ -94,13 +94,9 @@ $.fn.table = function (settings) {
     
     const update_row = function (row_data) {
         if (row_data) {
-            console.log("----")
-            console.log(row_data)
-            console.log(table_id + "_tr_" + row_data.id)
             
             try {
                 $dTable.row(table_id + "_tr_" + row_data.id).data(row_data).draw(false)
-                formatTable()
             } catch (e) {
                 console.log(e)
             }
@@ -109,6 +105,16 @@ $.fn.table = function (settings) {
         formatTable()
     }
     
+    const clear_selected_rows = function () {
+        try {
+            let table = $("#" + table_id + "> tbody  > tr")
+            $.each(table, function (i, row) {
+                $(row).removeClass("selected")
+            })
+        } catch (e) {
+            console.log("clear_selected_rows", e)
+        }
+    }
     //------------------------------------------------------------------
     
     if (_table) {
@@ -125,6 +131,8 @@ $.fn.table = function (settings) {
         
         if (settings.rowClick) {
             $dTable.on("click", "tr", function () {
+                clear_selected_rows()
+                $(this).addClass("selected")
                 let rowData = $dTable.row(this).data()
                 settings.rowClick(rowData)
             })
@@ -139,6 +147,9 @@ $.fn.table = function (settings) {
     return {
         insertRow: function (row_data) {
             insertRow(row_data)
+        },
+        clearSelectedRows: function () {
+            clear_selected_rows()
         },
         update_row (row_data) {
             update_row(row_data)
@@ -1943,6 +1954,10 @@ const Product = (function () {
             $(_tab_product_edit_variant).addClass("disabled")
             $(_tab_product_edit_inventory).addClass("disabled")
             $(_tab_product_edit_pricing).addClass("disabled")
+        } else {
+            $(_tab_product_edit_season).removeClass("disabled")
+            $(_tab_product_edit_unit).removeClass("disabled")
+            $(_tab_product_edit_variant).removeClass("disabled")
         }
         
     }
@@ -2282,6 +2297,7 @@ const Variant = (function () {
 
 const Season = (function () {
     "use strict"
+    ///////////////////////////////////////////////
     const _table_product_seasons = document.getElementById("table_product_seasons")
     const _select_season_assign_type = document.getElementById("select_season_assign_type")
     const _block_edit = document.getElementById("block_edit")
@@ -2314,6 +2330,7 @@ const Season = (function () {
     let $product_edit_table = $(_table_product_seasons)
     let months_shown = 6
     let disabled_dow = []
+    let event_limit = 3
     let start = moment(moment().year() + "-01-01").format("YYYY-MM-DD")
     let block_edit_mode = false
     let user_id = (document.getElementById("user_id")) ? (!isNaN(parseInt(document.getElementById("user_id").value))) ? parseInt(document.getElementById("user_id").value) : 4 : 4
@@ -2329,7 +2346,8 @@ const Season = (function () {
     ///////////////////////////////////////////////
     $(_button_edit_product_new_season_toggle)
       .on("click", function () {
-          alert()
+          clear()
+          $product_edit_table.clearSelectedRows()
       })
     
     $(_background_color)
@@ -2374,54 +2392,7 @@ const Season = (function () {
           let newColor = $(this).val()
           $(_text_color_display).css("background", newColor)
       })
-    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    const clear = function () {
-        _background_color.value = "#fff"
-        _text_color.value = "#000"
-        _border_color.value = "#eee"
-        $(_background_color).trigger("change")
-        $(_text_color).trigger("change")
-        $(_border_color).trigger("change")
-        disabled_dow = []
-        _season_enabled.checked = true
-        _enable_season_sunday.checked = true
-        _enable_season_monday.checked = true
-        _enable_season_tuesday.checked = true
-        _enable_season_wednesday.checked = true
-        _enable_season_thursday.checked = true
-        _enable_season_friday.checked = true
-        _enable_season_saturday.checked = true
-        _enable_all_seasons.checked = true
-        _season_id.value = ""
-        _season_name.value = ""
-        
-    }
-    const build_product_edit_table = function () {
-        
-        if (_table_product_seasons) {
-            $product_edit_table = $(_table_product_seasons).table({
-                table_type: "display_list",
-                data: Array.from(Season.all.values()),
-                columnDefs: [
-                    {
-                        title: "Id",
-                        targets: 0,
-                        data: "id",
-                    },
-                    {
-                        title: "Name",
-                        targets: 1,
-                        data: "name",
-                        render: function (data, type, row, meta) {
-                            return `<span class='' style='white-space: nowrap'>${data}</span>`
-                        },
-                    },
-                ],
-                rowClick: Season.edit,
-            })
-        }
-    }
-    
+    ///////////////////////////////////////////////
     const trim_obj_name = function (obj) {
         let temp = {}
         if (obj) {
@@ -2435,7 +2406,58 @@ const Season = (function () {
         
         return temp
     }
+    ///////////////////////////////////////////////
+    const clear = function () {
+        $(_background_color).val("#fff").trigger("change")
+        $(_text_color).val("#000").trigger("change")
+        $(_border_color).val("#999").trigger("change")
+        disabled_dow = []
+        _season_enabled.checked = true
+        _enable_season_sunday.checked = true
+        _enable_season_monday.checked = true
+        _enable_season_tuesday.checked = true
+        _enable_season_wednesday.checked = true
+        _enable_season_thursday.checked = true
+        _enable_season_friday.checked = true
+        _enable_season_saturday.checked = true
+        _enable_all_seasons.checked = true
+        _season_id.value = ""
+        _season_name.value = ""
+    }
+    ///////////////////////////////////////////////
+    const unset_active_calendars = function () {
+        $.each(calendars, function (index, cal) {
+            if (cal.fullCalendar) {
+                cal.fullCalendar("destroy")
+            }
+            cal.hide()
+        })
+        return true
+    }
+    const set_active_calendars = function () {
+        active_calendars = []
+        for (let n = 0; n < calendars.length; n++) {
+            if (n < months_shown) {
+                active_calendars.push(calendars[n])
+                calendars[n].show()
+            }
+        }
+        return active_calendars
+    }
     
+    const set_calendar_display = function () {
+        return moment(start).year() + " - " + moment(start).add(months_shown, "months").year()
+    }
+    
+    const set_block_edit_mode = function () {
+        
+        if (block_edit_mode) {
+            //$("#seasonsCalendarBlock div.fc-toolbar.fc-header-toolbar").addClass("block_edit_mode")
+        } else {
+            //$("div.fc-toolbar.fc-header-toolbar").removeClass("block_edit_mode")
+        }
+    }
+    ///////////////////////////////////////////////
     const set = function (season) {
         if (!season) {
             season = {}
@@ -2464,54 +2486,21 @@ const Season = (function () {
         }
     }
     
-    const load = function (seasons) {
-        console.log("Season:load()", seasons)
-        Season.all = new Map()
-        if (seasons) {
-            $.each(seasons, function (ind, season) {
-                console.log("season", season)
-                set(season)
-                Season.all.set(Season.detail.id, Season.detail)
-                $product_edit_table.insertRow(Season.detail)
-            })
-        }
-        
-        console.log("Season.all", Season.all)
-        console.log("Season.detail", Season.detail)
-    }
-    
-    const init_product_edit = function (seasons) {
-        if (seasons) {
-            load(seasons)
-        }
-        
-    }
-    
-    const build_calendar = function () {
-        console.log("build_calendar")
-        let display_range = moment(start).year() + " - " + moment(start).add(months_shown, "months").year()
-        
-        console.log("display_range", display_range)
-        $.each(active_calendars, function (index, cal) {
-        
-        })
-    }
-    
-    const set_block_edit_mode = function () {
-        
-        if (block_edit_mode) {
-            //$("#seasonsCalendarBlock div.fc-toolbar.fc-header-toolbar").addClass("block_edit_mode")
-        } else {
-            //$("div.fc-toolbar.fc-header-toolbar").removeClass("block_edit_mode")
-        }
+    const set_autocomplete = function () {
+        $(_season_name)
+          .on("click", function () {
+              $(this).select()
+          })
     }
     
     const edit = function (season) {
         if (season) {
+            console.log("season", season)
             $(_background_color).val(season.background_color).trigger("change")
             $(_border_color).val(season.border_color).trigger("change")
-            _season_name.value = season.name
             $(_text_color).val(season.text_color).trigger("change")
+            _season_name.value = season.name
+            _season_id.value = season.id
             /*
                 background_color: "#ffebee"
                 border_color: "#000"
@@ -2533,15 +2522,56 @@ const Season = (function () {
                 view_product_package_index: 1
              */
         } else {
-            alert("add")
+            //alert("add")
         }
         
     }
     
-    const set_autocomplete = function () {
-        console.log("Season:set_autocomplete()", _category_id.value)
+    const build_product_edit_table = function () {
+        if (_table_product_seasons) {
+            $product_edit_table = $(_table_product_seasons).table({
+                table_type: "display_list",
+                data: Array.from(Season.all.values()),
+                columnDefs: [
+                    {
+                        title: "Id",
+                        targets: 0,
+                        data: "id",
+                    },
+                    {
+                        title: "Name",
+                        targets: 1,
+                        data: "name",
+                        render: function (data, type, row, meta) {
+                            return `<span class='' style='white-space: nowrap'>${data}</span>`
+                        },
+                    },
+                ],
+                rowClick: Season.edit,
+            })
+        }
     }
     
+    const build_calendar = function () {
+        let active_calendars = set_active_calendars()
+        let display_range = set_calendar_display()
+        //*
+        console.log("active_calendars", active_calendars)
+        console.log("display_range", display_range)
+        //*/
+        $.each(active_calendars, function (index, cal) {
+            cal.fullCalendar({
+                header: {
+                    left: "title",
+                    center: "",
+                    right: "",
+                },
+            })
+        })
+        
+    }
+    
+    //////
     const init = function (settings) {
         clear()
         set_block_edit_mode()
@@ -2582,6 +2612,28 @@ const Season = (function () {
         }
     }
     
+    const load = function (seasons) {
+        Season.all = new Map()
+        if (seasons) {
+            $.each(seasons, function (ind, season) {
+                //console.log("season", season)
+                set(season)
+                Season.all.set(Season.detail.id, Season.detail)
+                $product_edit_table.insertRow(Season.detail)
+            })
+        }
+        
+        console.log("Season.all", Season.all)
+        console.log("Season.detail", Season.detail)
+    }
+    
+    const init_product_edit = function (seasons) {
+        if (seasons) {
+            load(seasons)
+        }
+        
+    }
+    /////
     return {
         all: new Map(),
         types: new Map(),
