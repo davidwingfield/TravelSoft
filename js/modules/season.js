@@ -95,6 +95,11 @@ const Season = (function () {
           let newColor = $(this).val()
           $(_text_color_display).css("background", newColor)
       })
+    
+    $(_enable_all_seasons)
+      .on("click", function () {
+          alert("click")
+      })
     ///////////////////////////////////////////////
     const trim_obj_name = function (obj) {
         let temp = {}
@@ -195,10 +200,30 @@ const Season = (function () {
               $(this).select()
           })
     }
+    const days = [
+        "sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday",
+    ]
+    const set_enabled_dow = function (disabled_dow) {
+        if (!disabled_dow) {
+            disabled_dow = []
+        }
+        if (disabled_dow.length === 0) {
+            $(_enable_all_seasons).trigger("click")
+        }
+        $.each(disabled_dow, function (i, dow) {
+            console.log(days[dow])
+        })
+    }
     
     const edit = function (season) {
         if (season) {
+            clear()
             console.log("season", season)
+            let disabled_dow = season.disabled_dow.map(function (x) {
+                return parseInt(x, 10)
+            })
+            set_enabled_dow(disabled_dow)
+            console.log("disabled", disabled_dow)
             $(_background_color).val(season.background_color).trigger("change")
             $(_border_color).val(season.border_color).trigger("change")
             $(_text_color).val(season.text_color).trigger("change")
