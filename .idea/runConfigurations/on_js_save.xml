@@ -1,0 +1,24 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="on_js_save" type="js.build_tools.gulp">
+    <node-interpreter>project</node-interpreter>
+    <node-options />
+    <gulpfile>$PROJECT_DIR$/gulpfile.js</gulpfile>
+    <tasks>
+      <task>move_site_js</task>
+    </tasks>
+    <arguments />
+    <envs />
+    <method v="2">
+      <option name="GulpBeforeRunTask" enabled="true">
+        <node-interpreter>project</node-interpreter>
+        <node-options />
+        <gulpfile>$PROJECT_DIR$/gulpfile.js</gulpfile>
+        <tasks>
+          <task>precompile</task>
+        </tasks>
+        <arguments />
+        <envs />
+      </option>
+    </method>
+  </configuration>
+</component>

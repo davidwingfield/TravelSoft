@@ -11,6 +11,8 @@ const Vendor = (function () {
     const _vendor_sku = document.getElementById("vendor_sku")
     const _button_submit_form_edit_vendor = document.getElementById("button_submit_form_edit_vendor")
     const _table_vendor_index = document.getElementById("table_vendor_index")
+    const _button_product_edit_save_vendor = document.getElementById("button_product_edit_save_vendor")
+    const _product_vendor_edit_form = document.getElementById("product_vendor_edit_form")
     let $index_table = $(_table_vendor_index)
     
     let user_id = (document.getElementById("user_id")) ? (!isNaN(parseInt(document.getElementById("user_id").value))) ? parseInt(document.getElementById("user_id").value) : 4 : 4
@@ -44,7 +46,10 @@ const Vendor = (function () {
     }
     
     //------------------------------------------------------------------
-    
+    $(_button_product_edit_save_vendor)
+      .on("click", function () {
+          alert("Save Vendor")
+      })
     $(_button_submit_form_edit_vendor)
       .on("click", function () {
           Vendor.save()

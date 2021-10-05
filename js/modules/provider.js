@@ -1,21 +1,49 @@
 const Provider = (function () {
     "use strict"
-    
-    //------------------------------------------------------------------
-    
+    ///////////////////////////////////////////////
     const base_url = "/providers"
-    
+    ///////////////////////////////////////////////
     let user_id = (document.getElementById("user_id")) ? (!isNaN(parseInt(document.getElementById("user_id").value))) ? parseInt(document.getElementById("user_id").value) : 4 : 4
+    const _button_product_edit_save_provider = document.getElementById("button_product_edit_save_provider")
     const _provider_index = document.getElementById("provider_index")
     const _provider_edit = document.getElementById("provider_edit")
     const _provider_name = document.getElementById("provider_name")
     const _provider_id = document.getElementById("provider_id")
     const _provider_company_id = document.getElementById("provider_company_id")
-    //------------------------------------------------------------------
-    
+    const _provider_enabled = document.getElementById("provider_enabled")
+    const _table_provider_index = document.getElementById("table_provider_index")
+    ///////////////////////////////////////////////
     let providerIndexPage, providerEditPage
-    
-    //------------------------------------------------------------------
+    let globalSelectedProvider = false
+    let $index_table = $(_table_provider_index)
+    ///////////////////////////////////////////////
+    $(_button_product_edit_save_provider)
+      .on("click", function () {
+          alert("Save Provider")
+      })
+    ///////////////////////////////////////////////
+    const set_autocomplete = function () {
+        
+        $(_provider_name)
+          .on("change", function () {
+          
+          })
+          .autocomplete({
+              serviceUrl: "/autocomplete/provider",
+              minChars: 2,
+              cache: false,
+              dataType: "json",
+              triggerSelectOnValidInput: false,
+              paramName: "st",
+              onSelect: function (suggestion) {
+                  console.log("suggestion", suggestion.data)
+                  globalSelectedProvider = true
+                  _provider_company_id.value = suggestion.data.company_id
+                  _provider_id.value = suggestion.data.provider_id
+                  _provider_name.value = suggestion.data.company_name
+              },
+          })
+    }
     
     const navigate = function (provider) {
         if (provider && provider.provider_id) {
@@ -23,70 +51,152 @@ const Provider = (function () {
         }
     }
     
-    //------------------------------------------------------------------
-    
-    $.fn.providerIndex = function (settings) {
-        const _table_provider_index = document.getElementById("table_provider_index")
-        
-        let $index_table = $(_table_provider_index)
-        
+    const load_product_edit = function (settings) {
         if (settings) {
-            if (settings.provider_list) {
-                Provider.all = settings.provider_list
+            let provider = {
+                provider_id: (settings.provider_id),
+                provider_company_id: (settings.provider_company_id),
+                provider_location_id: (settings.provider_location_id),
+                provider_code_direct_id: (settings.provider_code_direct_id),
+                provider_provider_vender: (settings.provider_provider_vender),
+                provider_enabled: (settings.provider_enabled),
+                provider_note: (settings.provider_note),
+                provider_created_by: (settings.provider_created_by) ? settings.provider_created_by : user_id,
+                provider_modified_by: (settings.provider_modified_by) ? settings.provider_modified_by : user_id,
+                provider_date_created: (settings.provider_date_created) ? settings.provider_date_created : formatDateMySQL(),
+                provider_date_modified: (settings.provider_date_modified) ? settings.provider_date_modified : formatDateMySQL(),
+                provider_addresses: [],
+                provider_contacts: [],
             }
+            set(provider)
         }
-        
-        if (_table_provider_index) {
-            $index_table = $(_table_provider_index).table({
-                table_type: "display_list",
-                data: Provider.all,
-                columnDefs: [
-                    {
-                        title: "Id",
-                        targets: 0,
-                        data: "provider_id",
-                    },
-                    {
-                        title: "Name",
-                        targets: 1,
-                        data: "company_name",
-                        render: function (data, type, row, meta) {
-                            let name = ""
-                            if (data) {
-                                name = data
-                            } else {
-                                return ""
-                            }
-                            
-                            return type === "display" && data.length > tableCellMaxChars ?
-                              "<span style='white-space: nowrap'>" + name.substr(0, (tableCellMaxChars - 3)) + "</span></span>" :
-                              "<span style='white-space: nowrap'>" + name + "</span></span>"
-                        },
-                    },
-                    {
-                        title: "Location",
-                        targets: 2,
-                        data: "location",
-                        render: function (data, type, row, meta) {
-                            return data
-                            let name = ""
-                            if (data && data.company_name) {
-                                name = data.name
-                            }
-                            
-                            return type === "display" && data.length > tableCellMaxChars ?
-                              "<span style='white-space: nowrap'>" + name.substr(0, (tableCellMaxChars - 3)) + "</span></span>" :
-                              "<span style='white-space: nowrap'>" + name + "</span></span>"
-                        },
-                    },
-                ],
-                rowClick: Provider.navigate,
-            })
-        }
-        
     }
     
-    //------------------------------------------------------------------
+    const set = function (provider) {
+        let details = clear_detail()
+        if (provider) {
+            details = {
+                id: validInt(provider.provider_id),
+                company_id: validInt(provider.provider_company_id),
+                location_id: validInt(provider.provider_location_id),
+                code_direct_id: (provider.provider_code_direct_id) ? provider.provider_code_direct_id : null,
+                provider_vendor: (provider.provider_provider_vendor) ? provider.provider_provider_vendor : 1,
+                enabled: (provider.provider_enabled) ? provider.provider_enabled : null,
+                note: (provider.provider_note) ? provider.provider_note : null,
+                created_by: (provider.provider_created_by) ? parseInt(provider.provider_created_by) : user_id,
+                modified_by: (provider.provider_modified_by) ? parseInt(provider.provider_modified_by) : user_id,
+                date_created: (provider.provider_date_created) ? provider.provider_date_created : formatDateMySQL(),
+                date_modified: (provider.provider_date_modified) ? provider.provider_date_modified : formatDateMySQL(),
+                addresses: (provider.provider_addresses) ? provider.provider_addresses : [],
+                contacts: (provider.provider_contacts) ? provider.provider_contacts : [],
+            }
+            Provider.detail = details
+        }
+    }
+    
+    const load_product_edit_form = function (settings) {
+        console.log("load_product_edit_form", settings)
+    }
+    
+    const clear_detail = function () {
+        return {
+            id: null,
+            company_id: null,
+            location_id: null,
+            code_direct_id: null,
+            provider_vendor: 1,
+            enabled: 1,
+            note: null,
+            addresses: new Map(),
+            contacts: new Map(),
+            created_by: user_id,
+            modified_by: user_id,
+            date_created: formatDateMySQL(),
+            date_modified: formatDateMySQL(),
+        }
+    }
+    
+    const build_index_table = function () {
+        $index_table = $(_table_provider_index).table({
+            table_type: "display_list",
+            data: Provider.all,
+            columnDefs: [
+                {
+                    title: "Id",
+                    targets: 0,
+                    data: "provider_id",
+                },
+                {
+                    title: "Name",
+                    targets: 1,
+                    data: "company_name",
+                    render: function (data, type, row, meta) {
+                        let name = ""
+                        if (data) {
+                            name = data
+                        } else {
+                            return ""
+                        }
+                        
+                        return type === "display" && data.length > tableCellMaxChars ?
+                          "<span style='white-space: nowrap'>" + name.substr(0, (tableCellMaxChars - 3)) + "</span></span>" :
+                          "<span style='white-space: nowrap'>" + name + "</span></span>"
+                    },
+                },
+                {
+                    title: "Location",
+                    targets: 2,
+                    data: "location",
+                    render: function (data, type, row, meta) {
+                        return data
+                    },
+                },
+            ],
+            rowClick: Provider.navigate,
+        })
+    }
+    
+    const set_defaults = function () {
+        return {
+            provider_list: [],
+        }
+    }
+    
+    const load_index_providers = function (providers) {
+        Provider.all = new Map()
+        console.log("populate_index_table", providers)
+        $.each(providers, function (i, provider) {
+            //console.log("provider", provider)
+            let detail = {
+                id: (provider.provider_id) ? provider.provider_id : null,
+                company_id: (provider.provider_company_id) ? provider.provider_company_id : null,
+                location_id: (provider.provider_id) ? provider.provider_id : null,
+                code_direct_id: (provider.provider_id) ? provider.provider_id : null,
+                provider_vendor: (provider.provider_id) ? provider.provider_id : null,
+                enabled: (provider.provider_id) ? provider.provider_id : null,
+                created_by: (provider.provider_id) ? provider.provider_id : null,
+                date_created: (provider.provider_id) ? provider.provider_id : null,
+                modified_by: (provider.provider_modified_by) ? provider.provider_id : null,
+                date_modified: (provider.provider_date_modified) ? provider.provider_id : null,
+                note: (provider.provider_note) ? provider.provider_id : null,
+            }
+            console.log("detail", detail)
+            Provider.all.set(provider.provider_id, provider)
+        })
+        //console.log("Provider.all", Provider.all)
+    }
+    ///////////////////////////////////////////////
+    const provider_index = function (settings) {
+        console.log("provider_index", settings)
+        if (!settings) {
+            settings = set_defaults()
+        }
+        if (settings.provider_list) {
+            load_index_providers(settings.provider_list)
+        }
+        
+        console.log("Provider.all", Provider.all)
+    }
     
     $.fn.providerEdit = function (settings) {
         const _provider_vender_details = document.getElementById("provider_vender_details")
@@ -107,6 +217,7 @@ const Provider = (function () {
         const $nav_tab_contacts = $("[aria-controls='panel_tab_contacts']")
         const $nav_tab_addresses = $("[aria-controls='panel_tab_addresses']")
         const $panel_tab_vendor_detail = $("[aria-controls='panel_tab_vendor_detail']")
+        ////
         let form_rules = {
             rules: {
                 provider_location_id: {
@@ -125,9 +236,7 @@ const Provider = (function () {
                 },
             },
         }
-        
-        //------------------------------------------------------------------
-        
+        ////
         $(_button_submit_form_edit_provider)
           .on("click", function () {
               /*
@@ -137,7 +246,6 @@ const Provider = (function () {
               Provider.save()
               
           })
-        
         $(_button_provider_add_address)
           .on("click", function () {
               if (provider_id.value === "") {
@@ -145,7 +253,6 @@ const Provider = (function () {
               }
               Address.load_modal()
           })
-        
         $(_button_add_provider_address)
           .on("click", function () {
               if (provider_id.value === "") {
@@ -153,7 +260,6 @@ const Provider = (function () {
               }
               Address.load_modal()
           })
-        
         $(_button_provider_add_contact)
           .on("click", function () {
               if (_provider_id && _provider_id.value === "") {
@@ -162,7 +268,6 @@ const Provider = (function () {
               
               Contact.edit()
           })
-        
         $(_button_add_provider_contact)
           .on("click", function () {
               if (_provider_id && _provider_id.value === "") {
@@ -172,12 +277,10 @@ const Provider = (function () {
               
               Contact.edit()
           })
-        
         $(_temp_location_id)
           .on("change", function () {
               _provider_location_id.value = _temp_location_id.value
           })
-        
         $(_provider_vendor)
           .on("change", function () {
               if (_provider_vendor.checked === true) {
@@ -186,51 +289,6 @@ const Provider = (function () {
                   close_vendor_details_form()
               }
           })
-        
-        //------------------------------------------------------------------
-        
-        const set_detail = function (provider) {
-            let details = clear_detail()
-            
-            if (provider) {
-                details = {
-                    id: validInt(provider.provider_id),
-                    company_id: validInt(provider.provider_company_id),
-                    location_id: validInt(provider.provider_location_id),
-                    code_direct_id: (provider.provider_code_direct_id) ? provider.provider_code_direct_id : null,
-                    provider_vendor: (provider.provider_provider_vendor) ? provider.provider_provider_vendor : 1,
-                    enabled: (provider.provider_enabled) ? provider.provider_enabled : null,
-                    note: (provider.provider_note) ? provider.provider_note : null,
-                    created_by: (provider.provider_created_by) ? parseInt(provider.provider_created_by) : user_id,
-                    modified_by: (provider.provider_modified_by) ? parseInt(provider.provider_modified_by) : user_id,
-                    date_created: (provider.provider_date_created) ? provider.provider_date_created : formatDateMySQL(),
-                    date_modified: (provider.provider_date_modified) ? provider.provider_date_modified : formatDateMySQL(),
-                    addresses: (provider.provider_addresses) ? provider.provider_addresses : [],
-                    contacts: (provider.provider_contacts) ? provider.provider_contacts : [],
-                }
-                
-            }
-            
-            Provider.detail = details
-        }
-        
-        const clear_detail = function () {
-            return {
-                id: null,
-                company_id: null,
-                location_id: null,
-                code_direct_id: null,
-                provider_vendor: 1,
-                enabled: 1,
-                note: null,
-                addresses: new Map(),
-                contacts: new Map(),
-                created_by: user_id,
-                modified_by: user_id,
-                date_created: formatDateMySQL(),
-                date_modified: formatDateMySQL(),
-            }
-        }
         
         //------------------------------------------------------------------
         
@@ -292,8 +350,8 @@ const Provider = (function () {
         
         const validate_form = function () {
             Provider.validator = validator_init(form_rules)
-            var tabs = $("#provider_edit_tabs>div.panel-heading.panel-heading-tab>ul.nav.nav-tabs>li.nav-item>a.nav-link")
-            var panels = $("#provider_edit_tabs > div.panel-body > div.tab-content > div.tab-pane")
+            let tabs = $("#provider_edit_tabs>div.panel-heading.panel-heading-tab>ul.nav.nav-tabs>li.nav-item>a.nav-link")
+            let panels = $("#provider_edit_tabs > div.panel-body > div.tab-content > div.tab-pane")
             let is_valid = $(_form_edit_provider).valid()
             
             if (!is_valid) {
@@ -343,7 +401,7 @@ const Provider = (function () {
                 Vendor.clear_provider_vendor_form()
                 
                 if (settings.provider_detail) {
-                    set_detail(settings.provider_detail)
+                    set(settings.provider_detail)
                     Vendor.init(settings.provider_detail)
                     Company.init(settings.provider_detail)
                     if (Provider.detail.contacts) {
@@ -448,7 +506,7 @@ const Provider = (function () {
             Address.build_company_address_table()
             
             clear_form()
-            set_detail()
+            set()
             
             if (settings.types) {
                 
@@ -489,8 +547,8 @@ const Provider = (function () {
             validate_form: function () {
                 return validate_form()
             },
-            set_detail: function (provider) {
-                set_detail(provider)
+            set: function (provider) {
+                set(provider)
             },
             load: function (settings) {
                 load(settings)
@@ -504,38 +562,16 @@ const Provider = (function () {
         
     }
     
-    //------------------------------------------------------------------
-    let globalSelectedProvider = false
-    
-    const set_autocomplete = function (category_id) {
-        $(_provider_name)
-          .on("change", function () {
-          
-          })
-          .autocomplete({
-              serviceUrl: "/autocomplete/provider",
-              minChars: 2,
-              cache: false,
-              dataType: "json",
-              triggerSelectOnValidInput: false,
-              paramName: "st",
-              onSelect: function (suggestion) {
-                  console.log("suggestion", suggestion.data)
-                  globalSelectedProvider = true
-                  _provider_company_id.value = suggestion.data.company_id
-                  _provider_id.value = suggestion.data.provider_id
-                  _provider_name.value = suggestion.data.company_name
-              },
-          })
-    }
-    
     const init = function () {
+        Provider.all = new Map()
         if (_provider_name) {
             set_autocomplete()
-            console.log("init")
+        }
+        if (_table_provider_index) {
+            build_index_table()
         }
     }
-    
+    ///////////////////////////////////////////////
     return {
         validator: null,
         detail: {
@@ -576,12 +612,13 @@ const Provider = (function () {
         navigate: function (provider) {
             navigate(provider)
         },
+        load_product_edit: function (settings) {
+            load_product_edit(settings)
+        },
         index: function (settings) {
-            
             if (_provider_index) {
-                providerIndexPage = $(_provider_index).providerIndex(settings)
+                provider_index(settings)
             }
-            
         },
         edit: function (settings) {
             if (_provider_edit) {
@@ -596,4 +633,5 @@ const Provider = (function () {
     }
     
 })()
+///////////////////////////////////////////////
 Provider.init()

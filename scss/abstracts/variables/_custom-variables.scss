@@ -1,4 +1,6 @@
 @use 'sass:math';
+@use 'sass:color';
+
 
 $custom-primary-color-light: #94c5f5 !default;
 $custom-primary-color: #55a1ec !default;
@@ -29,6 +31,7 @@ $custom-danger-color: #f44336 !default;
 $custom-danger-color-dark: #7b0900 !default;
 
 
+//
 $fill-light: #f8f8f7 !default;
 $fill-light-secondary: #bcbcb3 !default;
 $fill-dark: #0a070d !default;
@@ -42,11 +45,13 @@ $text-dark: $fill-dark !default;
 $text-dark-secondary: $fill-dark-secondary !default;
 $text-primary: #1959a6 !default;
 
+
 $xs: 0 !default;
-$sm: 576px !default;
+$sm: 480px !default;
 $md: 768px !default;
 $lg: 992px !default;
 $xl: 1200px !default;
+$xxl: 1600px !default;
 
 // 5. Page
 // ===========================================================================
@@ -72,6 +77,10 @@ $input-btn-padding-x-lg: 1rem !default;
 $input-padding-y: $input-btn-padding-y !default;
 $input-padding-x: $input-btn-padding-x !default;
 
+
+$color-scheme-1: #55a1ec !default;
+$color-scheme-1-light: #94c5f5 !default;
+$color-scheme-1-dark: #074f95 !default;
 
 
 

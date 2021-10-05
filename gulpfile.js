@@ -26,6 +26,8 @@ const js_site_source_modules = "./js/modules"
 const js_destination_path = "./public_html/assets/js/"
 const css_addons_path = "modules"
 const css_destination_path = "./public_html/assets/css/"
+const move_js_to = "/wamp64/www/public_html/assets/js"
+const move_css_to = "/wamp64/www/public_html/assets/css/"
 
 
 function get_site_scripts () {
@@ -109,7 +111,6 @@ function css_minify (cb) {
 
 
 function copy_js_files (cb) {
-    let move_js_to = "/wamp64/www/public_html/assets/js"
     let filesToMove = [
         "./public_html/assets/js/*.*",
     ]
@@ -129,39 +130,35 @@ function copy_vendor_files (cb) {
 
 
 function copy_site_js_files (cb) {
-    let move_css_to = "/wamp64/www/public_html/assets/js/"
     let filesToMove = [
         "./public_html/assets/js/site.min.js",
         "./public_html/assets/js/site.js",
     ]
-    gulp.src(filesToMove).pipe(gulp.dest(move_css_to))
+    gulp.src([
+        "./public_html/assets/js/site.min.js",
+        "./public_html/assets/js/site.js",
+    ]).pipe(gulp.dest(move_js_to))
     cb()
 }
 
 
 function copy_mdb_js_files (cb) {
-    let move_css_to = "/wamp64/www/public_html/assets/js/"
-    let filesToMove = [
+    gulp.src([
         "./public_html/assets/js/mdb.min.js",
         "./public_html/assets/js/mdb.js",
-    ]
-    gulp.src(filesToMove).pipe(gulp.dest(move_css_to))
+    ]).pipe(gulp.dest(move_js_to))
     cb()
 }
 
 
 function copy_css_files (cb) {
-    let move_css_to = "/wamp64/www/public_html/assets/css"
-    let filesToMove = [
-        "./public_html/assets/css/*.*",
-    ]
     gulp.src("./public_html/assets/css/*.*").pipe(gulp.dest(move_css_to))
     cb()
 }
 
 
 function complete (cb) {
-    console.log("-- COMPLETE --")
+    //console.log("-- COMPLETE --")
     cb()
 }
 
@@ -231,7 +228,7 @@ function browserSyncReload (done) {
 }
 
 
-function php (cb) {
+function php () {
     return gulp.src("./framework/**/*.php").pipe(gulp.dest("./public_html"))
     //return gulp.src("./src/**/*.php").pipe(gulp.dest("./public_html"))
 }
@@ -245,12 +242,9 @@ function watch_all_reload (cb) {
 function watch_css (cb) {
     
     watch("scss/**/*.scss", series(
-        clean_css,
         css_compile,
         css_minify,
         copy_css_files,
-        //browserSyncReload,
-        //complete,
       ),
     )
     cb()
@@ -260,90 +254,46 @@ function watch_css (cb) {
 function watch_scripts (cb) {
     
     watch(["js/modules/**/*.js", "js/modules.js"], series(
-        clean_scripts,
         bundle_scripts,
         pack_scripts,
-        copy_site_js_files,
       ),
     )
     cb()
 }
 
 
-function watch_all (cb) {
-    
-    watch(["js/modules/**/*.js", "js/modules.js"], series(
-        clean_scripts,
-        bundle_scripts,
-        pack_scripts,
-        copy_site_js_files,
-        browserSyncReload,
-        complete,
-      ),
-    )
-    
-    watch(["js/mdb/**/*.js", "js/mdb.js"], series(
-        clean_mdb,
-        bundle_mdb,
-        pack_mdb,
-        copy_mdb_js_files,
-        browserSyncReload,
-        complete,
-      ),
-    )
-    
-    watch("scss/**/*.scss", series(
-        clean_css,
-        css_compile,
-        css_minify,
-        copy_css_files,
-        browserSyncReload,
-        complete,
-      ),
-    )
-    
-}
-
-
 exports.build_scripts = series(
-  clean_scripts,
   bundle_scripts,
   pack_scripts,
-  copy_site_js_files,
-  //browserSyncReload,
-  //complete,
 )
 
+// mdb js
 exports.build_mdb = series(
-  clean_mdb,
   bundle_mdb,
   pack_mdb,
   copy_mdb_js_files,
-  //browserSyncReload,
-  complete,
 )
 
 exports.build_css = series(
-  clean_css,
+  //clean_css,
   css_compile,
   css_minify,
   copy_css_files,
-  //browserSyncReload,
-  complete,
 )
 
 exports.build = series(
-  parallel(clean_scripts, clean_mdb, clean_css),
+  parallel(clean_mdb, clean_css),
   parallel(bundle_scripts, bundle_mdb, css_compile),
   parallel(pack_scripts, pack_mdb, css_minify),
   parallel(copy_css_files, copy_js_files, copy_vendor_files),
-  complete,
 )
 
 exports.move_all = series(
   parallel(
-    copy_css_files, copy_js_files, copy_vendor_files,
-  ), complete,
+    copy_css_files,
+    copy_js_files,
+    copy_vendor_files,
+  ),
 )
 
 exports.move_css = series(
@@ -383,18 +333,145 @@ exports.dev_watch = function (done) {
 
 exports.live_server = parallel([watch_all, watch_all_reload, connect_sync])
 
-exports.precompile = series(
-  series(clean_scripts,
-    bundle_scripts,
-    pack_scripts),
-  
-  copy_js_files,
-  copy_site_js_files,
-)
+gulp.task("css-compile-modules", (done) => {
+    gulp.src("scss/**/modules/**/*.scss")
+      .pipe(sass({
+          outputStyle: "compressed",
+      }).on("error", sass.logError))
+      .pipe(autoprefixer())
+      .pipe(rename({
+          dirname: "modules",
+      }))
+      .pipe(gulp.dest("./dist/css/"))
+      .pipe(gulp.dest("./public_html/assets/css/"))
+      .pipe(gulp.dest("/wamp64/www/public_html/assets/css/"))
+    done()
+})
 
-exports.default = series(
-  clean_scripts,
-  bundle_scripts,
-  pack_scripts,
-  copy_site_js_files,
-)
+gulp.task("css-minify-modules", () => {
+    return gulp.src(["./dist/css/modules/*.css", "!./dist/css/modules/*.min.css"])
+      .pipe(cssmin())
+      .pipe(rename({
+          suffix: ".min",
+      }))
+      .pipe(gulp.dest("./dist/css/modules"))
+      .pipe(gulp.dest("./public_html/assets/css/modules"))
+      .pipe(gulp.dest("/wamp64/www/public_html/assets/css/modules"))
+})
+
+gulp.task("css-minify", gulp.series("css-minify-modules", () => {
+    return gulp.src(["./dist/css/*.css", "!./dist/css/*.min.css", "!./dist/css/bootstrap.css"])
+      .pipe(cssmin())
+      .pipe(rename({
+          suffix: ".min",
+      }))
+      .pipe(gulp.dest("./dist/css"))
+      .pipe(gulp.dest("./public_html/assets/css"))
+      .pipe(gulp.dest("/wamp64/www/public_html/assets/css"))
+}))
+
+gulp.task("js-build", () => {
+    const plugins = getJSModules()
+    
+    return gulp.src(plugins.modules)
+      .pipe(concat("site.js"))
+      .pipe(gulp.dest("./public_html/assets/js/"))
+      .pipe(gulp.dest("/wamp64/www/public_html/assets/js"))
+      .pipe(gulp.dest("./dist/js"))
+})
+
+gulp.task("js-minify", () => {
+    return gulp.src(["./dist/js/site.js"])
+      .pipe(minify({
+          ext: {
+              // src:'.js',
+              min: ".min.js",
+          },
+          noSource: true,
+      }))
+      .pipe(gulp.dest("./public_html/assets/js/"))
+      .pipe(gulp.dest("./dist/js"))
+      .pipe(gulp.dest("/wamp64/www/public_html/assets/js"))
+    
+})
+
+gulp.task("css-compile", gulp.series("css-compile-modules", () => {
+    return gulp.src("scss/*.scss")
+      .pipe(sass({
+          outputStyle: "compressed",
+      }).on("error", sass.logError))
+      .pipe(autoprefixer())
+      .pipe(gulp.dest("./dist/css/"))
+      .pipe(gulp.dest("./public_html/assets/css/"))
+      .pipe(gulp.dest("/wamp64/www/public_html/assets/css"))
+}))
+//
+
+//
+gulp.task("dev-start", (done) => {
+    
+    gulp.watch("scss/**/*.scss", gulp.series("css-compile", (done) => {
+        //browserSync.reload();
+        done()
+    }))
+    
+    gulp.watch("js/**/*.js", gulp.series("js-build", (done) => {
+        //browserSync.reload();
+        done()
+    }))
+    
+    gulp.watch(["dist/css/*.css", "!dist/css/*.min.css"], gulp.series("css-minify", (done) => {
+        //browserSync.reload();
+        done()
+    }))
+    
+    gulp.watch(["dist/js/*.js", "!dist/js/*.min.js"], gulp.series("js-minify", () => {
+        //browserSync.reload();
+        done()
+    }))
+    
+    done()
+})
+
+
+function getJSModules () {
+    delete require.cache[require.resolve("./js/modules.js")]
+    return require("./js/modules")
+}
+
+
+/////
+
+function watch_all (cb) {
+    
+    watch(["js/modules/**/*.js", "js/modules.js"], series(
+        //clean_scripts,
+        bundle_scripts,
+        pack_scripts,
+        //copy_site_js_files,
+        //browserSyncReload,
+        //complete,
+      ),
+    )
+    
+    watch(["js/mdb/**/*.js", "js/mdb.js"], series(
+        //clean_mdb,
+        bundle_mdb,
+        pack_mdb,
+        copy_mdb_js_files,
+        //browserSyncReload,
+        //complete,
+      ),
+    )
+    
+    watch("scss/**/*.scss", series(
+        //clean_css,
+        css_compile,
+        css_minify,
+        copy_css_files,
+        //browserSyncReload,
+        //complete,
+      ),
+    )
+    
+}

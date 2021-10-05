@@ -18,7 +18,7 @@ const Company = (function () {
     const _company_name = document.getElementById("company_name")
     const _company_id = document.getElementById("company_id")
     const _form_edit_company = document.getElementById("form_edit_company")
-    
+    ///////////////////////////////////////////////
     let user_id = (document.getElementById("user_id")) ? (!isNaN(parseInt(document.getElementById("user_id").value))) ? parseInt(document.getElementById("user_id").value) : 4 : 4
     let temp_company_name = ""
     let temp_company_id = ""
@@ -77,11 +77,7 @@ const Company = (function () {
             },
         },
     }
-    
-    //------------------------------------------------------------------
-    
-    //------------------------------------------------------------------
-    
+    ///////////////////////////////////////////////
     $(_company_id)
       .on("change", function () {
       
@@ -135,7 +131,6 @@ const Company = (function () {
               _company_name.value = Company.detail.name
           },
       })
-    
     $(_button_save_company_name)
       .on("click", function () {
           save()
@@ -162,9 +157,7 @@ const Company = (function () {
           save()
           
       })
-    
-    //------------------------------------------------------------------
-    
+    ///////////////////////////////////////////////
     const clear_form = function () {
         console.log("-- clear_form() --")
         _company_email.value = ""

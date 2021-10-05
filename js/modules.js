@@ -1,7 +1,9 @@
 exports.modules = [
-    "./js/modules/table.js",
+    "./js/modules/util.js",
+    "./js/modules/site.js",
     "./js/modules/settings.js",
     "./js/modules/global.js",
+    "./js/modules/table.js",
     "./js/modules/tinyMCE.js",
     "./js/modules/logger.js",
     "./js/modules/location.js",
@@ -17,6 +19,7 @@ exports.modules = [
     "./js/modules/province.js",
     "./js/modules/panel.js",
     "./js/modules/provider.js",
+    "./js/modules/login.js",
     "./js/modules/address.js",
     "./js/modules/contact.js",
     "./js/modules/company.js",

@@ -34,170 +34,175 @@ const Category = (function () {
     }
     
     const set_product_edit_defaults = function () {
-        let new_product = (!isNaN(_product_id.value))
-        console.log("new_product", new_product)
-        switch (_category_id.value) {
-          // Hotel
-            case "1" || 1:
-                if (new_product) {
-                    _product_name.disabled = false
-                    _pricing_strategy_id.value = ""
-                    _product_rating_id.value = ""
-                    //_day_span.value = ""
-                    //_arrive_time.value = ""
-                    //_depart_time.value = ""
-                } else {
+        if (_product_id) {
+            let new_product = (!isNaN(_product_id.value))
+            /*
+            console.log("new_product", new_product)
+            //*/
+            switch (_category_id.value) {
+              // Hotel
+                case "1" || 1:
+                    if (new_product) {
+                        _product_name.disabled = false
+                        _pricing_strategy_id.value = ""
+                        _product_rating_id.value = ""
+                        //_day_span.value = ""
+                        //_arrive_time.value = ""
+                        //_depart_time.value = ""
+                    } else {
+                        _product_name.disabled = true
+                    }
+                    _product_rating_id.disabled = false
+                    showNone()
+                    break
+              // Flight
+                case "2" || 2:
+                    showNone()
+                    //Flight.init(details)
+                    
+                    if (new_product) {
+                        _product_name.disabled = false
+                        _pricing_strategy_id.value = "2"
+                        _product_rating_id.value = ""
+                        //_day_span_flight.value = "0"
+                        //_day_span.value = "0"
+                        //_arrive_time.value = "00:00"
+                        //_depart_time.value = "00:00"
+                    } else {
+                        _product_name.disabled = true
+                    }
+                    _product_rating_id.disabled = true
+                    break
+              // Cars
+                case "3" || 3:
+                    showNone()
+                    //Car.init(details)
+                    //_min_age.labels[0].innerHTML = "Min Days:"
+                    //_max_age.labels[0].innerHTML = "Max Days:"
+                    if (new_product) {
+                        _product_name.disabled = false
+                        _pricing_strategy_id.value = "3"
+                        _product_rating_id.value = ""
+                        //_day_span_car.value = "0"
+                        //_day_span.value = "0"
+                        //_arrive_time.value = "00:00"
+                        //_depart_time.value = "00:00"
+                    } else {
+                        _product_name.disabled = true
+                    }
+                    _product_rating_id.disabled = true
+                    break
+              // Rail
+                case "4" || 4:
+                    if (new_product) {
+                        _product_name.disabled = false
+                        _pricing_strategy_id.value = "2"
+                        _product_rating_id.value = ""
+                        //_day_span_rail.value = "0"
+                        //_day_span.value = "0"
+                        //_arrive_time.value = "00:00"
+                        //_depart_time.value = "00:00"
+                    } else {
+                        _product_name.disabled = true
+                    }
+                    _product_rating_id.disabled = true
+                    showNone()
+                    //Rail.init(details)
+                    break
+              // Transport
+                case "5" || 5:
+                    if (new_product) {
+                        _product_name.disabled = false
+                        _pricing_strategy_id.value = ""
+                        _product_rating_id.value = ""
+                        //_day_span.value = ""
+                        //_arrive_time.value = ""
+                        //_depart_time.value = ""
+                    } else {
+                        _product_name.disabled = true
+                    }
+                    _product_rating_id.disabled = false
+                    showNone()
+                    //Car.init(details)
+                    break
+              // Tours
+                case "6" || 6:
+                    if (new_product) {
+                        _product_name.disabled = false
+                        _pricing_strategy_id.value = "2"
+                        _product_rating_id.value = ""
+                        //_day_span_tour.value = "0"
+                        //_day_span.value = "0"
+                        //_arrive_time.value = "00:00"
+                        //_depart_time.value = "00:00"
+                    } else {
+                        _product_name.disabled = true
+                    }
+                    _product_rating_id.disabled = true
+                    showNone()
+                    //Tour.init(details)
+                    break
+              // Cruises
+                case "7" || 7:
+                    if (new_product) {
+                        _product_name.disabled = false
+                        _pricing_strategy_id.value = ""
+                        _product_rating_id.value = ""
+                        //_day_span.value = "0"
+                        //_arrive_time.value = "00:00"
+                        //_depart_time.value = "00:00"
+                    } else {
+                        _product_name.disabled = true
+                    }
+                    _product_rating_id.disabled = false
+                    showNone()
+                    break
+              // Packages
+                case "8" || 8:
+                    if (new_product) {
+                        _product_name.disabled = false
+                        _pricing_strategy_id.value = ""
+                        _product_rating_id.value = ""
+                        //_day_span.value = ""
+                        //_arrive_time.value = ""
+                        //_depart_time.value = ""
+                    } else {
+                        _product_name.disabled = true
+                    }
+                    _product_rating_id.disabled = false
+                    showNone()
+                    break
+              // Other
+                case "9" || 9:
+                    console.log("other")
+                    if (new_product) {
+                        _product_name.disabled = false
+                        _pricing_strategy_id.value = ""
+                        _product_rating_id.value = ""
+                        //_day_span.value = ""
+                        //_arrive_time.value = ""
+                        //_depart_time.value = ""
+                    } else {
+                        _product_name.disabled = true
+                    }
+                    _product_rating_id.disabled = false
+                    showNone()
+                    break
+                default:
                     _product_name.disabled = true
-                }
-                _product_rating_id.disabled = false
-                showNone()
-                break
-          // Flight
-            case "2" || 2:
-                showNone()
-                //Flight.init(details)
-                
-                if (new_product) {
-                    _product_name.disabled = false
-                    _pricing_strategy_id.value = "2"
-                    _product_rating_id.value = ""
-                    //_day_span_flight.value = "0"
-                    //_day_span.value = "0"
-                    //_arrive_time.value = "00:00"
-                    //_depart_time.value = "00:00"
-                } else {
-                    _product_name.disabled = true
-                }
-                _product_rating_id.disabled = true
-                break
-          // Cars
-            case "3" || 3:
-                showNone()
-                //Car.init(details)
-                //_min_age.labels[0].innerHTML = "Min Days:"
-                //_max_age.labels[0].innerHTML = "Max Days:"
-                if (new_product) {
-                    _product_name.disabled = false
-                    _pricing_strategy_id.value = "3"
-                    _product_rating_id.value = ""
-                    //_day_span_car.value = "0"
-                    //_day_span.value = "0"
-                    //_arrive_time.value = "00:00"
-                    //_depart_time.value = "00:00"
-                } else {
-                    _product_name.disabled = true
-                }
-                _product_rating_id.disabled = true
-                break
-          // Rail
-            case "4" || 4:
-                if (new_product) {
-                    _product_name.disabled = false
-                    _pricing_strategy_id.value = "2"
-                    _product_rating_id.value = ""
-                    //_day_span_rail.value = "0"
-                    //_day_span.value = "0"
-                    //_arrive_time.value = "00:00"
-                    //_depart_time.value = "00:00"
-                } else {
-                    _product_name.disabled = true
-                }
-                _product_rating_id.disabled = true
-                showNone()
-                //Rail.init(details)
-                break
-          // Transport
-            case "5" || 5:
-                if (new_product) {
-                    _product_name.disabled = false
-                    _pricing_strategy_id.value = ""
-                    _product_rating_id.value = ""
-                    //_day_span.value = ""
-                    //_arrive_time.value = ""
-                    //_depart_time.value = ""
-                } else {
-                    _product_name.disabled = true
-                }
-                _product_rating_id.disabled = false
-                showNone()
-                //Car.init(details)
-                break
-          // Tours
-            case "6" || 6:
-                if (new_product) {
-                    _product_name.disabled = false
-                    _pricing_strategy_id.value = "2"
-                    _product_rating_id.value = ""
-                    //_day_span_tour.value = "0"
-                    //_day_span.value = "0"
-                    //_arrive_time.value = "00:00"
-                    //_depart_time.value = "00:00"
-                } else {
-                    _product_name.disabled = true
-                }
-                _product_rating_id.disabled = true
-                showNone()
-                //Tour.init(details)
-                break
-          // Cruises
-            case "7" || 7:
-                if (new_product) {
-                    _product_name.disabled = false
-                    _pricing_strategy_id.value = ""
-                    _product_rating_id.value = ""
-                    //_day_span.value = "0"
-                    //_arrive_time.value = "00:00"
-                    //_depart_time.value = "00:00"
-                } else {
-                    _product_name.disabled = true
-                }
-                _product_rating_id.disabled = false
-                showNone()
-                break
-          // Packages
-            case "8" || 8:
-                if (new_product) {
-                    _product_name.disabled = false
-                    _pricing_strategy_id.value = ""
-                    _product_rating_id.value = ""
-                    //_day_span.value = ""
-                    //_arrive_time.value = ""
-                    //_depart_time.value = ""
-                } else {
-                    _product_name.disabled = true
-                }
-                _product_rating_id.disabled = false
-                showNone()
-                break
-          // Other
-            case "9" || 9:
-                console.log("other")
-                if (new_product) {
-                    _product_name.disabled = false
-                    _pricing_strategy_id.value = ""
-                    _product_rating_id.value = ""
-                    //_day_span.value = ""
-                    //_arrive_time.value = ""
-                    //_depart_time.value = ""
-                } else {
-                    _product_name.disabled = true
-                }
-                _product_rating_id.disabled = false
-                showNone()
-                break
-            default:
-                _product_name.disabled = true
-                if (new_product) {
-                    _pricing_strategy_id.value = ""
-                    _product_rating_id.value = ""
-                    //_day_span.value = ""
-                    //_arrive_time.value = ""
-                    //_depart_time.value = ""
-                }
-                _product_rating_id.disabled = false
-                showNone()
-                break
+                    if (new_product) {
+                        _pricing_strategy_id.value = ""
+                        _product_rating_id.value = ""
+                        //_day_span.value = ""
+                        //_arrive_time.value = ""
+                        //_depart_time.value = ""
+                    }
+                    _product_rating_id.disabled = false
+                    showNone()
+                    break
+            }
         }
+        
     }
     
     const init = function () {
@@ -206,11 +211,14 @@ const Category = (function () {
     
     const validate = function () {
         set_product_edit_defaults()
-        if (isNaN(parseInt(_category_id.value))) {
-            //$(_tab_product_edit_season).addClass("disabled")
-        } else {
-            //$(_tab_product_edit_season).removeClass("disabled")
+        if (_category_id) {
+            if (isNaN(parseInt(_category_id.value))) {
+                //$(_tab_product_edit_season).addClass("disabled")
+            } else {
+                //$(_tab_product_edit_season).removeClass("disabled")
+            }
         }
+        
     }
     
     const reset = function () {

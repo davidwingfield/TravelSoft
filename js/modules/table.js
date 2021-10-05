@@ -1,18 +1,13 @@
 $.fn.table = function (settings) {
-    
-    //------------------------------------------------------------------
-    
+    "use strict"
+    ///////////////////////////////////////////////
     let columnDefs, data = []
     let $dTable
     let table_type = "display_list"
     let table_id = $(this).attr("id")
-    
-    //------------------------------------------------------------------
-    
+    ///////////////////////////////////////////////
     const _table = document.getElementById(table_id)
-    
-    //------------------------------------------------------------------
-    
+    ///////////////////////////////////////////////
     if (settings) {
         if (settings.columnDefs) {
             columnDefs = settings.columnDefs
@@ -24,9 +19,7 @@ $.fn.table = function (settings) {
             data = settings.data
         }
     }
-    
-    //------------------------------------------------------------------
-    
+    ///////////////////////////////////////////////
     const formatTable = function () {
         let _filter = $("#" + table_id + "_wrapper .dataTables_filter")
         let _length = $("#" + table_id + "_wrapper .dataTables_length")
@@ -77,9 +70,7 @@ $.fn.table = function (settings) {
         }
         
     }
-    
-    //------------------------------------------------------------------
-    
+    ///////////////////////////////////////////////
     const insertRow = function (row_data) {
         if (row_data) {
             try {
@@ -91,7 +82,6 @@ $.fn.table = function (settings) {
             }
         }
     }
-    
     const update_row = function (row_data) {
         if (row_data) {
             
@@ -104,7 +94,6 @@ $.fn.table = function (settings) {
         
         formatTable()
     }
-    
     const clear_selected_rows = function () {
         try {
             let table = $("#" + table_id + "> tbody  > tr")
@@ -115,8 +104,7 @@ $.fn.table = function (settings) {
             console.log("clear_selected_rows", e)
         }
     }
-    //------------------------------------------------------------------
-    
+    ///////////////////////////////////////////////
     if (_table) {
         try {
             $dTable = $(this).DataTable({
@@ -131,19 +119,22 @@ $.fn.table = function (settings) {
         
         if (settings.rowClick) {
             $dTable.on("click", "tr", function () {
-                clear_selected_rows()
-                $(this).addClass("selected")
-                let rowData = $dTable.row(this).data()
-                settings.rowClick(rowData)
+                if ($(this).find("td").hasClass("dataTables_empty")) {
+                
+                } else {
+                    clear_selected_rows()
+                    $(this).addClass("selected")
+                    let rowData = $dTable.row(this).data()
+                    settings.rowClick(rowData)
+                }
+                
             })
         }
         
         formatTable()
         
     }
-    
-    //------------------------------------------------------------------
-    
+    ///////////////////////////////////////////////
     return {
         insertRow: function (row_data) {
             insertRow(row_data)

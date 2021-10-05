@@ -1,27 +1,27 @@
-// Helpers
-// MDB helpers
+
 .img-fluid,
 .video-fluid {
-  max-width: 100%;
   height: auto;
+  max-width: 100%;
 }
 
 .flex-center {
-  display: flex;
   align-items: center;
-  justify-content: center;
+  display: flex;
   height: 100%;
-
+  justify-content: center;
+  
   p {
     margin: 0;
   }
-
+  
   ul {
     text-align: center;
-
+    
     li {
       margin-bottom: $flex-center-ul-mb;
-
+      
+      
       &:last-of-type {
         margin-bottom: 0;
       }
@@ -38,11 +38,10 @@
 }
 
 
-
 // Responsive width
 .w-responsive {
   width: 75%;
-
+  
   @media (max-width: 740px) {
     width: 100%;
   }
@@ -64,9 +63,9 @@
 }
 
 @each $name,
-  $color in $basic-mdb-colors {
-  @include bg-variant(".bg-#{$name}", $color);
-
+$color in $basic-mdb-colors {
+  @include bg-variant('.bg-#{$name}', $color);
+  
   .border-#{$name} {
     border-color: $color !important;
   }

@@ -1,5 +1,6 @@
-const Product = (function () {
+const Product = (function ($) {
     "use strict"
+    ///////////////////////////////////////////////
     const _category_id = document.getElementById("category_id")
     const _product_id = document.getElementById("product_id")
     const _product_name = document.getElementById("product_name")
@@ -19,7 +20,11 @@ const Product = (function () {
     const _product_unit_edit_form = document.getElementById("product_unit_edit_form")
     const _product_vendor_edit_form = document.getElementById("product_vendor_edit_form")
     const _product_type_sort = document.getElementById("product_type_sort")
-    //
+    const _button_product_edit_save_detail = document.getElementById("button_product_edit_save_detail")
+    const _product_enabled = document.getElementById("product_enabled")
+    
+    ///////////////////////////////////////////////
+    const _tab_product_edit_meta = document.getElementById("tab_product_edit_meta")
     const _tab_product_edit_season = document.getElementById("tab_product_edit_season")
     const _tab_product_edit_unit = document.getElementById("tab_product_edit_unit")
     const _tab_product_edit_variant = document.getElementById("tab_product_edit_variant")
@@ -30,19 +35,104 @@ const Product = (function () {
     let $index_table = $(_table_product_index)
     let user_id = (document.getElementById("user_id")) ? (!isNaN(parseInt(document.getElementById("user_id").value))) ? parseInt(document.getElementById("user_id").value) : 4 : 4
     ///////////////////////////////////////////////
-    
+    $(_button_product_edit_save_detail)
+      .on("click", function () {
+          alert("Product Save")
+      })
+    $(_product_type_sort)
+      .on("change", function () {
+          alert("Product Filter by Category")
+      })
+    $(_view_all)
+      .on("change", function () {
+          set_all_viewable_options(this.checked)
+      })
+    $(_view_management)
+      .on("change", function () {
+          if (this.checked === true) {
+              if (_view_ops.checked === true && _view_sales.checked === true) {
+                  _view_all.checked = true
+              }
+          } else if (this.checked === false) {
+              if (_view_ops.checked === false && _view_sales.checked === false) {
+                  _view_all.checked = false
+              }
+          } else {
+              _view_all.checked = false
+          }
+      })
+    $(_view_ops)
+      .on("change", function () {
+          if (this.checked === true) {
+              if (_view_management.checked === true && _view_sales.checked === true) {
+                  _view_all.checked = true
+              }
+          } else if (this.checked === false) {
+              if (_view_management.checked === false && _view_sales.checked === false) {
+                  _view_all.checked = false
+              }
+          } else {
+              _view_all.checked = false
+          }
+      })
+    $(_view_sales)
+      .on("change", function () {
+          if (this.checked === true) {
+              if (_view_management.checked === true && _view_ops.checked === true) {
+                  _view_all.checked = true
+              }
+          } else if (this.checked === false) {
+              if (_view_management.checked === false && _view_ops.checked === false) {
+                  _view_all.checked = false
+              }
+          } else {
+              _view_all.checked = false
+          }
+      })
     ///////////////////////////////////////////////
+    const set_all_viewable_options = function (option) {
+        _view_sales.checked = option
+        _view_ops.checked = option
+        _view_management.checked = option
+    }
+    const validate_form = function () {
+        Provider.validator = validator_init(form_rules)
+        let tabs = $("#provider_edit_tabs>div.panel-heading.panel-heading-tab>ul.nav.nav-tabs>li.nav-item>a.nav-link")
+        let panels = $("#provider_edit_tabs > div.panel-body > div.tab-content > div.tab-pane")
+        let is_valid = $(_form_edit_product).valid()
+        
+        if (!is_valid) {
+            
+            $.each(panels, function (index, item) {
+                
+                if ($(this).find(".invalid").length > 0) {
+                    let nav_tab = $("body").find("[aria-controls='" + $(this).attr("id") + "']")
+                    tabs.removeClass("active")
+                    panels.removeClass("active")
+                    $(this).addClass("active")
+                    nav_tab.addClass("active")
+                    return false
+                }
+            })
+            
+        }
+        
+        return is_valid
+    }
     const validate = function () {
-        if (_product_id.value === "") {
-            $(_tab_product_edit_season).addClass("disabled")
-            $(_tab_product_edit_unit).addClass("disabled")
-            $(_tab_product_edit_variant).addClass("disabled")
-            $(_tab_product_edit_inventory).addClass("disabled")
-            $(_tab_product_edit_pricing).addClass("disabled")
-        } else {
-            $(_tab_product_edit_season).removeClass("disabled")
-            $(_tab_product_edit_unit).removeClass("disabled")
-            $(_tab_product_edit_variant).removeClass("disabled")
+        if (_product_id) {
+            if (_product_id.value === "") {
+                $(_tab_product_edit_season).addClass("disabled")
+                $(_tab_product_edit_unit).addClass("disabled")
+                $(_tab_product_edit_variant).addClass("disabled")
+                $(_tab_product_edit_inventory).addClass("disabled")
+                $(_tab_product_edit_pricing).addClass("disabled")
+                $(_tab_product_edit_meta).addClass("disabled")
+            } else {
+                $(_tab_product_edit_season).removeClass("disabled")
+                $(_tab_product_edit_unit).removeClass("disabled")
+                $(_tab_product_edit_variant).removeClass("disabled")
+            }
         }
         
     }
@@ -62,10 +152,10 @@ const Product = (function () {
     
     const populate_form = function () {
         clear()
-        
         $(_category_id).val(Product.detail.category_id).trigger("change")
         $(_product_id).val(Product.detail.id).trigger("change")
         _product_name.value = Product.detail.name
+        _product_enabled.checked = (Product.detail.enabled === 1)
         $(_product_sku).val(Product.detail.sku).trigger("change")
         $(_product_rating_id).val(Product.detail.rating).trigger("change")
         $(_pricing_strategy_id).val(Product.detail.pricing_strategy_types_id).trigger("change")
@@ -76,6 +166,22 @@ const Product = (function () {
         _view_sales.checked = (Product.detail.view_sales === 1)
         _view_ops.checked = (Product.detail.view_ops === 1)
         _view_management.checked = (Product.detail.view_management === 1)
+    }
+    
+    const clear = function () {
+        _category_id.value = ""
+        _product_id.value = ""
+        _product_name.value = ""
+        _product_sku.value = ""
+        _product_rating_id.value = ""
+        _pricing_strategy_id.value = ""
+        _currency_id.value = ""
+        _product_description_short.value = ""
+        _product_description_long.value = ""
+        _view_all.checked = true
+        _view_sales.checked = true
+        _view_ops.checked = true
+        _view_management.checked = true
     }
     
     const set = function (product) {
@@ -101,7 +207,7 @@ const Product = (function () {
             depart_time: (product.depart_time) ? product.depart_time : null,
             description_long: (product.description_long) ? product.description_long : null,
             description_short: (product.description_short) ? product.description_short : null,
-            enabled: (product.enabled) ? product.enabled : null,
+            enabled: (product.enabled) ? product.enabled : 1,
             from_api: (product.from_api) ? product.from_api : null,
             hotel_code: (product.hotel_code) ? product.hotel_code : null,
             id: (product.id) ? product.id : null,
@@ -119,23 +225,9 @@ const Product = (function () {
             teen: (product.teen) ? product.teen : null,
         }
         populate_form()
+        /*
         console.log("Product.detail", Product.detail)
-    }
-    
-    const clear = function () {
-        _category_id.value = ""
-        _product_id.value = ""
-        _product_name.value = ""
-        _product_sku.value = ""
-        _product_rating_id.value = ""
-        _pricing_strategy_id.value = ""
-        _currency_id.value = ""
-        _product_description_short.value = ""
-        _product_description_long.value = ""
-        _view_all.checked = true
-        _view_sales.checked = true
-        _view_ops.checked = true
-        _view_management.checked = true
+        //*/
     }
     
     const build_index_table = function () {
@@ -201,32 +293,13 @@ const Product = (function () {
     const load_products = function (products) {
         $.each(products, function (i, product) {
             Product.all.set(product.product_id, product)
-            console.log(product)
+            /*
+            console.log("product: ", product)
+            //*/
         })
-        
-        console.log(Product.all)
-    }
-    
-    const init_edit = function (settings) {
-        console.log("Product.init_edit", settings)
-        clear()
-        
-        if (settings) {
-            if (settings.product) {
-                set(settings.product)
-                if (settings.product_seasons) {
-                    Season.init_product_edit(settings.product_seasons)
-                    $(_tab_product_edit_season).removeClass("disabled")
-                }
-                
-            }
-            
-            if (settings.categories) {
-                Category.load(settings.categories)
-            }
-        }
-        validate()
-        
+        /*
+        console.log("Product.all", Product.all)
+        //*/
     }
     
     const handle_product_error = function (error) {
@@ -252,7 +325,7 @@ const Product = (function () {
               },
           })
     }
-    
+    ///////////////////////////////////////////////
     const init_index = function (settings) {
         console.log("settings", settings)
         Product.all = new Map()
@@ -262,6 +335,30 @@ const Product = (function () {
             }
         }
         build_index_table()
+        
+    }
+    
+    const init_edit = function (settings) {
+        //*
+        console.log("Product.init_edit", settings)
+        //*/
+        if (settings) {
+            clear()
+            if (settings.product) {
+                set(settings.product)
+                Provider.load_product_edit(settings)
+                if (settings.product_seasons) {
+                    Season.init_product_edit(settings.product_seasons)
+                    $(_tab_product_edit_season).removeClass("disabled")
+                }
+                
+            }
+            
+            if (settings.categories) {
+                Category.load(settings.categories)
+            }
+            validate()
+        }
         
     }
     ///////////////////////////////////////////////
@@ -325,6 +422,4 @@ const Product = (function () {
         },
     }
     ///////////////////////////////////////////////
-})()
-
-Product.init()
+})(jQuery)

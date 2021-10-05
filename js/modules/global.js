@@ -1,3 +1,5 @@
+let mdbPreloader = document.getElementById("mdb-preloader")
+
 $.fn.BuildDropDown = function (settings) {
     if (!settings || !settings.text_field || !settings.id_field) {
         return
@@ -238,17 +240,29 @@ const sendGetRequest = function (url, data_to_send, callback) {
 const sendPostRequest = function (url, data_to_send, callback) {
     let msg, result = []
     if (url && data_to_send) {
+        
         $.postJSON(url, data_to_send, function (data, status, xhr) {
+            ///////////////////////////////////////////////
+            console.log("data", data)
+            console.log("status", status)
+            console.log("xhr", xhr)
+            ///////////////////////////////////////////////
             if (status === "success" && typeof data.result !== "undefined") {
+                
                 if (data.result) {
                     result = data.result
-                    
                     return callback(result)
                 } else {
-                    return handleError("Error Posting Data")
+                    return handleError("Error Posting Data 1")
                 }
-            } else {
+            } else if (status === "failed" && typeof data.result === "undefined") {
+                if (data.error) {
+                    return handleError(data.error)
+                }
                 return handleError("Error Posting Data")
+            } else {
+                
+                return handleError("Error Posting Data 2")
             }
         })
     } else {
@@ -270,13 +284,17 @@ const _display_ajax_error = function (jqXHR, exception, uri) {
         status: "",
         uri: uri,
     }
+    
     if (jqXHR.status === 0) {
         msg = "Not connected, verify Network."
     } else if (jqXHR.status === 404) {
         msg = "Requested page( " + uri + " ) not found. [404]"
-        
     } else if (jqXHR.status === 500) {
-        msg = "Internal Server Error [500]."
+        if (jqXHR.responseJSON) {
+            msg = jqXHR.responseJSON
+        } else {
+            msg = "Internal Server Error [500]."
+        }
         
     } else if (exception === "parsererror") {
         msg = "Requested JSON parse failed."
@@ -321,12 +339,16 @@ const formatDateMySQL = function (date) {
 }
 
 const resize_elements = function () {
-    const _page = document.getElementsByClassName("page")
+    console.log("resize_elements")
+    const _page = document.getElementById("page")
+    const _main = document.getElementById("main")
     const _nav = document.getElementsByClassName("double-nav")
     const _screen_width = document.getElementById("screen_width")
     const _screen_height = document.getElementById("screen_height")
     const _footer = document.getElementsByClassName("page-footer")
     const _slide_out = document.getElementById("slide-out")
+    const _page_header = document.getElementById("page_header")
+    ////
     let window_height = 0
     let window_width = 0
     let page_height = 0
@@ -335,50 +357,49 @@ const resize_elements = function () {
     let side_nav_width = 0
     let side_nav_height = 0
     let footer_height = 0
+    ///////////////////////////////////////////////
     window_height = window.innerHeight
     window_width = window.innerWidth
-    //
+    ///////////////////////////////////////////////
     $.each(_nav, function (i, elem) {
         let temp_height = (!isNaN(parseInt($(elem).outerHeight()))) ? parseInt($(elem).outerHeight()) : 0
         nav_height = nav_height + temp_height
     })
+    
     $.each(_footer, function (i, elem) {
         let temp_height = (!isNaN(parseInt($(elem).outerHeight()))) ? parseInt($(elem).outerHeight()) : 0
         footer_height = footer_height + temp_height
     })
+    ///////////////////////////////////////////////
+    let page_ht = (window_height - footer_height - nav_height - 1) + "px"
+    ///////////////////////////////////////////////
+    if (_slide_out) {
+        side_nav_height = (!isNaN(parseInt($(_slide_out).outerHeight()))) ? parseInt($(_slide_out).outerHeight()) : 0
+        side_nav_width = (!isNaN(parseInt($(_slide_out).width()))) ? parseInt($(_slide_out).width()) : 0
+    }
     
-    if (window_width >= 1440) {
-        if (_slide_out) {
-            side_nav_height = (!isNaN(parseInt($(_slide_out).outerHeight()))) ? parseInt($(_slide_out).outerHeight()) : 0
-            side_nav_width = (!isNaN(parseInt($(_slide_out).width()))) ? parseInt($(_slide_out).width()) : 0
+    if (_page && _screen_height && _screen_width) {
+        if (_main) {
+            $(_main).css({
+                "padding-left": side_nav_width + "px",
+                "min-height": window_height - footer_height - nav_height + "px!important",
+            })
         }
-    }
-    if (_page, _screen_height, _screen_width) {
-        page_height = (!isNaN(parseInt($(_page).outerHeight()))) ? parseInt($(_page).outerHeight()) : 0
-        page_width = (!isNaN(parseInt($(_page).outerWidth()))) ? parseInt($(_page).outerWidth()) : 0
         
-        $("main").css({
-            "padding-left": side_nav_width + "px",
-            "min-height": window_height - footer_height - nav_height + "px",
-        })
+        if (_page) {
+            _page.setAttribute("style", "min-height:" + page_ht + "!important")
+            //_page.setAttribute("style", "min-height:" + page_ht + "!important")
+        }
         
-        $(_page).css({
-            "margin-top": nav_height + "px",
-            "height": "auto",
-        })
+        if (_page_header) {
+            _page_header.setAttribute("style", "margin-top:" + nav_height + "px;")
+        }
         
-        _screen_height.innerText = window_height
-        _screen_width.innerText = window_width
+        //For debugging
+        _screen_height.innerText = window_height + ""
+        _screen_width.innerText = window_width + ""
     }
     
-    //
-    //console.log("side_nav_height", side_nav_height)
-    //console.log("side_nav_width", side_nav_width)
-    //console.log("page_height", page_height)
-    //console.log("page_width", page_width)
-    //console.log("window_height", window_height)
-    //console.log("window_width", window_width)
-    //console.log("nav_height", nav_height)
 }
 
 const debounce = function (func) {
@@ -407,15 +428,24 @@ jQuery.extend({
             }
         })
         request.fail(function (jqXHR, textStatus, msg) {
+            ///////////////////////////////////////////////
+            //console.log("jqXHR", jqXHR.responseJSON)
+            //console.log("_display_ajax_error", _display_ajax_error(jqXHR, textStatus, url))
+            //console.log("textStatus", textStatus)
+            //console.log("msg", msg)
+            ///////////////////////////////////////////////
             if (typeof textStatus !== "undefined") {
-                console.log("Request failed")
-                console.log(_display_ajax_error(jqXHR, textStatus, url))
+                console.error("Request failed", _display_ajax_error(jqXHR, textStatus, url))
             } else {
-                console.log("Request failed")
-                console.log(_display_ajax_error(jqXHR, textStatus, url))
+                console.error("Request failed", _display_ajax_error(jqXHR, textStatus, url))
             }
             if ($.isFunction(callback)) {
-                callback(msg, "failed")
+                if (jqXHR.responseJSON) {
+                    callback(jqXHR.responseJSON, "failed")
+                } else {
+                    callback(jqXHR, "failed")
+                }
+                
             }
             return false
         })
@@ -610,14 +640,13 @@ const htmlEncode = function (value) {
     return $("<textarea/>").text(value).html()
 }
 
-$("document").ready(function () {
-    window.addEventListener("resize", debounce(function (e) {
-        resize_elements("end of resizing")
-    }))
-    window.addEventListener("load", debounce(function (e) {
-        //console.log("addEventListener", "load")
-        resize_elements("end of resizing")
-    }))
+window.onload = function () {
+    
+    if (mdbPreloader) {
+        $("#mdb-preloader").fadeOut(500)
+    }
+    $("#alert_box").hide()
+    
     const but_toggle = document.querySelectorAll(".but_toggle")
     but_toggle.forEach(el => el.addEventListener("click", event => {
         if (el.dataset.texted) {
@@ -655,34 +684,7 @@ $("document").ready(function () {
         "hideMethod": "fadeOut",
     }
     
-    document.addEventListener("DOMContentLoaded", function (event) {
-        let mdbPreloader = document.getElementById("mdb-preloader")
-        if (mdbPreloader) {
-            $("#mdb-preloader").fadeOut(500)
-        }
-        
-    })
-    
     $("body").scrollTop()
-    
-    $(".button-collapse").sideNav({
-        edge: "left", // Choose the horizontal origin
-        closeOnClick: false, // Closes side-nav on &lt;a&gt; clicks, useful for Angular/Meteor
-        breakpoint: 1200, // Breakpoint for button collapse
-        menuWidth: 240, // Width for sidenav
-        timeDurationOpen: 500, // Time duration open menu
-        timeDurationClose: 500, // Time duration open menu
-        timeDurationOverlayOpen: 200, // Time duration open overlay
-        timeDurationOverlayClose: 200, // Time duration close overlay
-        easingOpen: "easeInOutQuad", // Open animation
-        easingClose: "easeInOutQuad", // Close animation
-        showOverlay: true, // Display overflay
-        showCloseButton: false, // Append close button into siednav
-        slim: false, // turn on slime mode
-        onOpen: null, // callback function
-        onClose: null, // callback function
-        mode: "over", // change sidenav mode
-    })
     
     $.fn.dataTableExt.afnFiltering.push(
       function (oSettings, aData, iDataIndex) {
@@ -713,11 +715,35 @@ $("document").ready(function () {
           }
       },
     )
-    
+    ////
     if ("scrollRestoration" in history) {
         history.scrollRestoration = "manual"
     }
     
-    $("#alert_box").hide()
     window.scrollTo(0, 0)
+}
+$(document).ready(function () {
+    window.addEventListener("resize", debounce(function (e) {
+        resize_elements("end of resizing")
+    }))
+    resize_elements("end of resizing")
+    
+    $(".button-collapse").sideNav({
+        edge: "left", // Choose the horizontal origin
+        closeOnClick: false, // Closes side-nav on &lt;a&gt; clicks, useful for Angular/Meteor
+        breakpoint: 1200, // Breakpoint for button collapse
+        menuWidth: 240, // Width for sidenav
+        timeDurationOpen: 500, // Time duration open menu
+        timeDurationClose: 500, // Time duration open menu
+        timeDurationOverlayOpen: 200, // Time duration open overlay
+        timeDurationOverlayClose: 200, // Time duration close overlay
+        easingOpen: "easeInOutQuad", // Open animation
+        easingClose: "easeInOutQuad", // Close animation
+        showOverlay: true, // Display overflay
+        showCloseButton: false, // Append close button into siednav
+        slim: false, // turn on slime mode
+        onOpen: null, // callback function
+        onClose: null, // callback function
+        mode: "over", // change sidenav mode
+    })
 })

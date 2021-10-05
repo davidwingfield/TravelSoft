@@ -1,19 +1,19 @@
 @charset "UTF-8";
+@use 'sass:math';
+@use 'sass:color';
 
-// Abstracts
 @import 'abstracts/functions';
 @import 'abstracts/variables';
 @import 'core/rfs';
 @import 'abstracts/mixins';
+@import 'abstracts/root';
 @import 'abstracts/global';
 @import 'abstracts/helpers';
 @import 'abstracts/custom-skin';
 
-// Core
 @import 'core/typography';
 @import 'core/masks';
 @import 'core/waves';
-
 // Layout
 @import 'layout/body';
 @import 'layout/main';
@@ -91,8 +91,7 @@
 @import 'modules/parallax/module';
 @import 'modules/animations-extended/module';
 @import 'modules/megamenu/module';
-
-// Addons
+//
 @import 'addons/datatables';
 @import 'addons/autocomplete';
 @import 'addons/datatables2';
@@ -108,6 +107,5 @@
 // @import "addons/chat";
 // @import "addons/charts/module";
 // @import "addons/vector-map";
-
 // Your custom styles
 @import 'custom-styles';

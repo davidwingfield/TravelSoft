@@ -419,7 +419,6 @@ const Location = (function () {
             if (settings.types.location_types) {
                 Location.types = buildMap(settings.types.location_types, "location_types_id")
             }
-            
         }
         
         if (_form_edit_location) {

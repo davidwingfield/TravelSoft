@@ -1,6 +1,6 @@
-@use 'sass:color';
 @use 'sass:math';
 @import '../variables/custom-variables';
+
 
 $theme-color: $custom-primary-color !default;
 
@@ -19,10 +19,10 @@ $theme-color: $custom-primary-color !default;
 
 
 @function contrast($back, $front) {
-  $backLum: luminance($back) + .05 !default;
-  $foreLum: luminance($front) + .05;
+  $backlum: luminance($back) + .05 !default;
+  $forelum: luminance($front) + .05;
   
-  @return math.div(math.max($backLum, $foreLum), math.min($backLum, $foreLum));
+  @return math.div(math.max($backlum, $forelum), math.min($backlum, $forelum));
 }
 
 

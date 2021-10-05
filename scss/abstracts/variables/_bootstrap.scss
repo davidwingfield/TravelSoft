@@ -1,6 +1,7 @@
 @use 'sass:math';
 @import 'custom-variables';
 
+
 $white: #ffffff !default;
 $gray-100: #f8f9fa !default;
 $gray-200: #e9ecef !default;
@@ -62,17 +63,19 @@ $colors: map-merge(
     $colors
 );
 
-$primary: $blue !default;
-$secondary: $gray-600 !default;
-$success: $green !default;
-$info: $cyan !default;
-$warning: $yellow !default;
-$danger: $red !default;
-$light: $gray-100 !default;
-$dark: $gray-800 !default;
+$primary: $custom-primary-color !default;
+$secondary: $custom-secondary-color !default;
+$success: $custom-success-color !default;
+$info: $custom-info-color !default;
+$warning: $custom-warning-color !default;
+$danger: $custom-danger-color !default;
+$default: $custom-default-color !default;
+
+$light: $fill-light !default;
+$dark: $fill-dark !default;
 
 $theme-colors: () !default;
-// stylelint-disable-next-line scss/dollar-variable-default
+
 $theme-colors: map-merge(
     (
       'primary': $primary,
@@ -172,7 +175,7 @@ $body-color: $gray-900 !default;
 //
 // Style anchor elements.
 
-$link-color: theme-color('primary') !default;
+$link-color: $custom-primary-color !default;
 $link-decoration: none !default;
 $link-hover-color: darken($link-color, 15%) !default;
 $link-hover-decoration: underline !default;
@@ -192,11 +195,12 @@ $paragraph-margin-bottom: 1rem !default;
 // adapting to different screen sizes, for use in media queries.
 
 $grid-breakpoints: (
-  xs: 0,
-  sm: 576px,
-  md: 768px,
-  lg: 992px,
-  xl: 1200px
+  xs: $xs,
+  sm: $sm,
+  md: $md,
+  lg: $lg,
+  xl: $xl,
+  xxl:$xxl
 ) !default;
 
 @include _assert-ascending($grid-breakpoints, '$grid-breakpoints');
@@ -206,12 +210,19 @@ $grid-breakpoints: (
 // Grid containers
 //
 // Define the maximum width of `.container` for different screen sizes.
-
+//  xs -
+//  sm - 36
+//  md - 48
+//  lg - 32
+//  xl - 60
+//  xxl -
 $container-max-widths: (
-  sm: 540px,
-  md: 720px,
-  lg: 960px,
-  xl: 1140px
+  xs: 300px,
+  sm: 460px,
+  md: 750px,
+  lg: 970px,
+  xl: 1170px,
+  xxl: 1340px,
 ) !default;
 
 @include _assert-ascending($container-max-widths, '$container-max-widths');
@@ -720,7 +731,7 @@ $navbar-brand-font-size: $font-size-lg !default;
 // Compute the navbar-brand padding-y so the navbar-brand will have the same height as navbar-text and nav-link
 $nav-link-height: $font-size-base * $line-height-base + $nav-link-padding-y * 2 !default;
 $navbar-brand-height: $navbar-brand-font-size * $line-height-base !default;
-$navbar-brand-padding-y: math.div($nav-link-height - $navbar-brand-height, 2) !default;
+$navbar-brand-padding-y: ($nav-link-height - math.div($navbar-brand-height, 2)) !default;
 
 $navbar-toggler-padding-y: .25rem !default;
 $navbar-toggler-padding-x: .75rem !default;
@@ -840,9 +851,6 @@ $card-deck-margin: $card-group-margin !default;
 $card-columns-count: 3 !default;
 $card-columns-gap: 1.25rem !default;
 $card-columns-margin: $card-spacer-y !default;
-
-
-// Tooltips
 
 $tooltip-font-size: $font-size-sm !default;
 $tooltip-max-width: 200px !default;
