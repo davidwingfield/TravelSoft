@@ -589,7 +589,7 @@ const Provider = (function () {
             addresses: [],
             contacts: [],
         },
-        all: [],
+        all: new Map(),
         index_table: null,
         save: function () {
             if (_provider_edit) {

@@ -26,7 +26,7 @@
         "type": "git",
         "url": "git+https://github.com/davidwingfield/TravelSoft"
     },
-    "author": "David Wingfield (david@trips2italy.com)",
+    "author": "David Wingfield (David@trips2italy.com)",
     "license": "MIT",
     "devDependencies": {
         "browser-sync": "^2.27.5",
