@@ -17,8 +17,6 @@ const Vendor = (function () {
     
     let user_id = (document.getElementById("user_id")) ? (!isNaN(parseInt(document.getElementById("user_id").value))) ? parseInt(document.getElementById("user_id").value) : 4 : 4
     
-    //------------------------------------------------------------------
-    
     const provider_vendor_form_rules = {
         rules: {
             vendor_sku: {

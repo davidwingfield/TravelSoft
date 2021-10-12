@@ -9,8 +9,9 @@ const Variant = (function () {
         detail: {},
         all: new Map(),
         init: function (settings) {
-            init(settings)
+            init()
         },
     }
     
 })()
+Variant.init()

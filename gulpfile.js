@@ -345,6 +345,7 @@ gulp.task("css-compile-modules", (done) => {
       .pipe(gulp.dest("./dist/css/"))
       .pipe(gulp.dest("./public_html/assets/css/"))
       .pipe(gulp.dest("/wamp64/www/public_html/assets/css/"))
+      .pipe(gulp.dest("/wamp64/www/mockups/public/css/"))
     done()
 })
 
@@ -357,6 +358,7 @@ gulp.task("css-minify-modules", () => {
       .pipe(gulp.dest("./dist/css/modules"))
       .pipe(gulp.dest("./public_html/assets/css/modules"))
       .pipe(gulp.dest("/wamp64/www/public_html/assets/css/modules"))
+      .pipe(gulp.dest("/wamp64/www/mockups/public/css/modules"))
 })
 
 gulp.task("css-minify", gulp.series("css-minify-modules", () => {
@@ -368,6 +370,7 @@ gulp.task("css-minify", gulp.series("css-minify-modules", () => {
       .pipe(gulp.dest("./dist/css"))
       .pipe(gulp.dest("./public_html/assets/css"))
       .pipe(gulp.dest("/wamp64/www/public_html/assets/css"))
+      .pipe(gulp.dest("/wamp64/www/mockups/public/css"))
 }))
 
 gulp.task("js-build", () => {
@@ -377,6 +380,7 @@ gulp.task("js-build", () => {
       .pipe(concat("site.js"))
       .pipe(gulp.dest("./public_html/assets/js/"))
       .pipe(gulp.dest("/wamp64/www/public_html/assets/js"))
+      .pipe(gulp.dest("/wamp64/www/mockups/public/js"))
       .pipe(gulp.dest("./dist/js"))
 })
 
@@ -392,7 +396,7 @@ gulp.task("js-minify", () => {
       .pipe(gulp.dest("./public_html/assets/js/"))
       .pipe(gulp.dest("./dist/js"))
       .pipe(gulp.dest("/wamp64/www/public_html/assets/js"))
-    
+      .pipe(gulp.dest("/wamp64/www/mockups/public/js"))
 })
 
 gulp.task("css-compile", gulp.series("css-compile-modules", () => {
@@ -404,6 +408,7 @@ gulp.task("css-compile", gulp.series("css-compile-modules", () => {
       .pipe(gulp.dest("./dist/css/"))
       .pipe(gulp.dest("./public_html/assets/css/"))
       .pipe(gulp.dest("/wamp64/www/public_html/assets/css"))
+      .pipe(gulp.dest("/wamp64/www/mockups/public/css"))
 }))
 //
 

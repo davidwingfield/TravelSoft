@@ -41,7 +41,9 @@ const Login = (function () {
         if (_email && _password) {
             Login.validator = validator_init(form_rules)
         }
+        console.log("login", {})
     }
+    
     const submit_login = function () {
         if (validate_form()) {
             let dataToSend = {
@@ -51,21 +53,22 @@ const Login = (function () {
             send_login(remove_nulls(dataToSend))
         }
     }
+    
     const handle_login_error = function (msg) {
         toastr.error(msg)
     }
+    
     const send_login = function (dataToSend) {
         if (dataToSend) {
-            //*
-            console.log("send_login - dataToSend", dataToSend)
-            //*/
             try {
-                sendPostRequest("/users/login", dataToSend, function (data, status, xhr) {
-                    if (data) {
-                        if (data.user_id) {
+                sendPostRequest("/api/v1.0/users/login", dataToSend, function (data, status, xhr) {
+                    console.log("data", data.result)
+                    if (data && data.result) {
+                        let result = data.result
+                        if (result.id) {
+                            alert()
                             window.location.replace("/")
                         }
-                        
                     } else {
                         return handle_login_error("Error: 1")
                     }
@@ -78,10 +81,10 @@ const Login = (function () {
             return handle_login_error("Error: 3")
         }
     }
+    
     const validate_form = function () {
         Login.validator = validator_init(form_rules)
         let is_valid = $(_form_login).valid()
-        
         if (!is_valid) {
             /*
             $.each(panels, function (index, item) {
