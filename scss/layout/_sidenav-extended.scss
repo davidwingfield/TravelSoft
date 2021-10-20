@@ -22,25 +22,25 @@
 
 // Sidenav
 .side-nav {
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: 1040;
-  width: $sidenav-width;
-  height: 100%;
-  padding: 0;
-  padding-bottom: $sidenav-padding-bottom;
-  margin: 0;
-  overflow: hidden;
-  list-style-type: none;
+  backface-visibility: hidden;
   background-color: $sidenav-background-color;
-  background-repeat: no-repeat;
   background-position: center;
+  background-repeat: no-repeat;
   background-size: cover;
   box-shadow: $z-depth-1;
+  height: 100%;
+  left: 0;
+  list-style-type: none;
+  margin: 0;
+  overflow: hidden;
+  padding: 0;
+  padding-bottom: $sidenav-padding-bottom;
+  position: fixed;
+  top: 0;
   transform: translateX(-100%);
-  backface-visibility: hidden;
+  width: $sidenav-width;
   will-change: transform;
+  z-index: 1040;
   // color: #fff !important;
   @extend .white-text !optional;
   

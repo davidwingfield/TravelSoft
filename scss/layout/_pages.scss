@@ -215,8 +215,8 @@
 }
 
 .page-header .breadcrumb {
+  margin: 0;
   padding: 0;
-  margin: 0
 }
 
 .page-header-bordered {
@@ -224,30 +224,31 @@
   padding-bottom: 20px;
   margin-bottom: 30px;
   background-color: $fill-light;
-  border-bottom: 1px solid transparent
+  border-bottom: 1px solid transparent;
 }
 
 .page-header-tabs {
-  padding-bottom: 0
+  padding-bottom: 0;
 }
 
 .page-header-tabs .nav-tabs-line {
   margin-top: 5px;
-  border-bottom-color: transparent
+  border-bottom-color: transparent;
 }
 
 .page-header-tabs .nav-tabs-line > li > a {
-  padding: 5px 20px
+  padding: 5px 20px;
 }
 
 
 @media (max-width: $small-screen) {
   .page-header {
-    padding: 10px
+    padding: 10px;
   }
   
+  
   .page-content {
-    padding: 10px
+    padding: 10px;
   }
   
 }
@@ -268,5 +269,6 @@
 }
 
 .page-content {
-  padding: 1rem 1rem;
+  padding-left: .5rem;
+  padding-right: .5rem;
 }
